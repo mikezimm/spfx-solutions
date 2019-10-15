@@ -1,3 +1,5 @@
+//Tiles.tsx
+
 import * as React from 'react';
 import styles from './Tiles.module.scss';
 import { ITilesProps } from './ITilesProps';
@@ -28,10 +30,19 @@ export default class Tiles extends React.Component<ITilesProps, ITilesState> {
   public render(): React.ReactElement<ITilesProps> {
     let { isLoading, items }: ITilesState = this.state;
     let elements = items.map((item: any, index: number) => {
-      return <a className={styles.promotedLink} style={{ width: `${this.props.imageWidth}px`, height: `${this.props.imageHeight}px` }} key={index} target={(item[this.props.newTabField]) ? "_blank" : ""} href={(item[this.props.linkField]) ? item[this.props.linkField].Url : "#"}>
-        <img className={styles.image} src={(item[this.props.backgroundImageField]) ? item[this.props.backgroundImageField].Url : this.props.fallbackImageUrl} />
-        <div className={styles.textArea} style={{ height: `${this.props.imageHeight}px`, top: `${this.props.imageHeight / 3 * 2}px` }}>
-          <div className={styles.container} style={{ padding: `${this.props.textPadding}px` }}>
+
+      let thisTop = `${this.props.imageHeight / 3 * 2}px`;
+      let thisHeight = `${this.props.imageHeight}px`;
+      let thisWidth = `${this.props.imageWidth}px`;
+      let imgURL = (item[this.props.backgroundImageField]) ? item[this.props.backgroundImageField].Url : this.props.fallbackImageUrl;
+      let thisTarget = (item[this.props.newTabField]) ? "_blank" : "";
+      let thisHref = (item[this.props.linkField]) ? item[this.props.linkField].Url : "#";
+      let thisPadding = `${this.props.textPadding}px`;
+
+      return <a className={styles.promotedLink} style={{ width: thisWidth, height: thisHeight }} key={index} target={ thisTarget } href={ thisHref }>
+        <img className={styles.image} src={ imgURL  } />
+        <div className={styles.textArea} style={{ height: thisHeight, top: thisTop }}>
+          <div className={styles.container} style={{ padding: thisPadding }}>
             <div className={styles.title}>{item.Title}</div>
             <div className={styles.description}>{item[this.props.descriptionField]}</div>
           </div>
@@ -53,6 +64,8 @@ export default class Tiles extends React.Component<ITilesProps, ITilesState> {
     try {
       let filter = (this.props.tileTypeField && this.props.tileType) ? `${this.props.tileTypeField} eq '${this.props.tileType}'` : '';
       let response = await pnp.sp.web.lists.getByTitle(this.props.list).items.filter(filter).orderBy((this.props.orderByField) ? this.props.orderByField : "ID").top(this.props.count).get();
+      console.log('fetchData():');
+      console.log(response);      
       this.setState({
         items: response,
         isLoading: false,
